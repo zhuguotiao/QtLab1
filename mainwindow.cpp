@@ -9,16 +9,33 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    connect(ui->btnNum0,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
-    connect(ui->btnNum1,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
-    connect(ui->btnNum2,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
-    connect(ui->btnNum3,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
-    connect(ui->btnNum4,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
-    connect(ui->btnNum5,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
-    connect(ui->btnNum6,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
-    connect(ui->btnNum7,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
-    connect(ui->btnNum8,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
-    connect(ui->btnNum9,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    digitBTNs = {
+        {Qt::Key_0,ui->btnNum0},
+        {Qt::Key_1,ui->btnNum1},
+        {Qt::Key_2,ui->btnNum2},
+        {Qt::Key_3,ui->btnNum3},
+        {Qt::Key_4,ui->btnNum4},
+        {Qt::Key_5,ui->btnNum5},
+        {Qt::Key_6,ui->btnNum6},
+        {Qt::Key_7,ui->btnNum7},
+        {Qt::Key_8,ui->btnNum8},
+        {Qt::Key_9,ui->btnNum9},
+    };
+
+    foreach (auto btn, digitBTNs) {
+        connect(btn,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    }
+
+    // connect(ui->btnNum0,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    // connect(ui->btnNum1,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    // connect(ui->btnNum2,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    // connect(ui->btnNum3,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    // connect(ui->btnNum4,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    // connect(ui->btnNum5,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    // connect(ui->btnNum6,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    // connect(ui->btnNum7,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    // connect(ui->btnNum8,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
+    // connect(ui->btnNum9,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
 
     //绑定加减乘除的双操作数
     connect(ui->btnMultiple,SIGNAL(clicked()),this,SLOT(btnbinaryOperatorClicked()));
@@ -67,6 +84,7 @@ QString MainWindow::calculation(bool *ok)
         ui->statusbar->showMessage("这是计算函数:"+QString("operands is %1,opcode is %2").arg(operands.size()).arg(opcodes.size()));
     }else{
         ui->statusbar->showMessage(QString("operands is %1,opcode is %2").arg(operands.size()).arg(opcodes.size()));
+        return NULL;
     }
     return QString::number(result);
 }
@@ -109,7 +127,8 @@ void MainWindow::btnbinaryOperatorClicked()
         operands.push_back(operand);
         operand="";
         opcodes.push_back(opcode);
-    }
+    }else if(opcodes.size()==0 && operand=="")
+        opcodes.push_back(opcode);
 
     QString result=calculation();
     ui->display->setText(result);
@@ -132,20 +151,60 @@ void MainWindow::btnUnaryOperatorClicked()
         else if(op=="√")
             result=sqrt(result);
 
+        operands.push_back(QString::number(result));
         ui->display->setText(QString::number(result));
     }
 }
 
-
+//计算=
 void MainWindow::on_btnEqual_clicked()
 {
-    if(operand != ""){
+    if(operand!=""){
         operands.push_back(operand);
         operand="";
+        QString result=calculation();
+        ui->display->setText(result);
     }
 
-    QString result=calculation();
-    ui->display->setText(result);
 
+
+}
+
+//处理键盘输入数字
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+
+    foreach(auto btnKey,digitBTNs.keys()){
+        if(event->key()==btnKey)
+            digitBTNs[event->key()]->animateClick();
+    }
+
+}
+
+
+void MainWindow::on_btnClearAll_clicked()
+{
+    operand="";
+    ui->display->setText("");
+}
+
+
+void MainWindow::on_btnClear_clicked()
+{
+    operands.clear();
+    opcodes.clear();
+    operand="";
+    opcode="";
+    ui->display->setText("");
+}
+
+
+void MainWindow::on_btnMinus_2_clicked()
+{
+    if(operand.toDouble()>0)
+        operand="-"+operand;
+    else if(operand.toDouble()<0)
+        operand=QString::number(operand.toDouble()*(-1));
+    ui->display->setText(operand);
 }
 

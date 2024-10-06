@@ -3,6 +3,10 @@
 
 #include <QMainWindow>
 #include<QStack>
+#include<QLabel>
+#include<QKeyEvent>
+#include<QMap>
+#include<QPushButton>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,6 +23,7 @@ public:
     QString opcode;
     QStack<QString> operands;
     QStack<QString> opcodes;
+    QMap<int, QPushButton*> digitBTNs;
 
     QString calculation(bool *ok=NULL);
 
@@ -33,6 +38,18 @@ private slots:
 
 
     void on_btnEqual_clicked();
+
+
+    //增加键盘输入
+    virtual void keyPressEvent(QKeyEvent *event);
+
+    void on_btnClearAll_clicked();
+
+    void on_btnClear_clicked();
+
+
+
+    void on_btnMinus_2_clicked();
 
 private:
     Ui::MainWindow *ui;

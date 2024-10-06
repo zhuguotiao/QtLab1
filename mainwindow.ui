@@ -11,13 +11,16 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>计算器-陈德城-2022414040102</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QPushButton{
 	font: 290 16pt &quot;Microsoft YaHei UI&quot;;
 }
 QPushButton:hover{
+	background-color:rgb(205, 205, 205);
+}
+QPushButton:pressed{
 	background-color:rgb(205, 205, 205);
 }</string>
   </property>
@@ -224,7 +227,7 @@ QPushButton:hover{
            </sizepolicy>
           </property>
           <property name="text">
-           <string>×</string>
+           <string>*</string>
           </property>
          </widget>
         </item>
