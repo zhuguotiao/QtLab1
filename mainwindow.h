@@ -26,8 +26,10 @@ private slots:
     void btnNumClicked();
     void on_btnPoint_clicked();
     void on_btnDel_clicked();
+//双操作数处理函数
     void btnbinaryOperatorClicked();
-
+//单操作数处理函数
+    void btnUnaryOperatorClicked();
 
 
     void on_btnEqual_clicked();

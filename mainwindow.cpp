@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include"math.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,10 +20,19 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnNum8,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
     connect(ui->btnNum9,SIGNAL(clicked()),this,SLOT(btnNumClicked()));
 
+    //绑定加减乘除的双操作数
     connect(ui->btnMultiple,SIGNAL(clicked()),this,SLOT(btnbinaryOperatorClicked()));
     connect(ui->btnAdd,SIGNAL(clicked()),this,SLOT(btnbinaryOperatorClicked()));
     connect(ui->btnMinus,SIGNAL(clicked()),this,SLOT(btnbinaryOperatorClicked()));
     connect(ui->btnDivide,SIGNAL(clicked()),this,SLOT(btnbinaryOperatorClicked()));
+
+    //绑定单操作数
+    connect(ui->btnPercentage,SIGNAL(clicked()),this,SLOT(btnUnaryOperatorClicked()));
+    connect(ui->btnInverse,SIGNAL(clicked()),this,SLOT(btnUnaryOperatorClicked()));
+    connect(ui->btnSquare,SIGNAL(clicked()),this,SLOT(btnUnaryOperatorClicked()));
+    connect(ui->btnsqrt,SIGNAL(clicked()),this,SLOT(btnUnaryOperatorClicked()));
+
+
 }
 
 MainWindow::~MainWindow()
@@ -52,6 +62,8 @@ QString MainWindow::calculation(bool *ok)
         }else if(op=="/"){
             result=operand1/operand2;
         }
+        operands.push_back(QString::number(result));
+
         ui->statusbar->showMessage("这是计算函数:"+QString("operands is %1,opcode is %2").arg(operands.size()).arg(opcodes.size()));
     }else{
         ui->statusbar->showMessage(QString("operands is %1,opcode is %2").arg(operands.size()).arg(opcodes.size()));
@@ -102,6 +114,26 @@ void MainWindow::btnbinaryOperatorClicked()
     QString result=calculation();
     ui->display->setText(result);
 
+}
+
+void MainWindow::btnUnaryOperatorClicked()
+{
+    if(operand != ""){
+        double result = operand.toDouble();
+        operand="";
+        QString op=qobject_cast<QPushButton*>(sender())->text();
+
+        if(op=="%")
+            result /=100.0;
+        else if(op =="1/x")
+            result=1/result;
+        else if(op=="x^2")
+            result*=result;
+        else if(op=="√")
+            result=sqrt(result);
+
+        ui->display->setText(QString::number(result));
+    }
 }
 
 
