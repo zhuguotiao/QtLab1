@@ -77,6 +77,10 @@ QString MainWindow::calculation(bool *ok)
         }else if(op=="*"){
             result=operand1*operand2;
         }else if(op=="/"){
+            if(operand2==0){
+                ui->btnClearAll->click();
+                return "除零异常，已清空操作符和操作数";
+            }
             result=operand1/operand2;
         }
         operands.push_back(QString::number(result));
@@ -137,9 +141,25 @@ void MainWindow::btnbinaryOperatorClicked()
 
 void MainWindow::btnUnaryOperatorClicked()
 {
-    if(operand != ""){
+    if(operand != ""&&opcodes.size()==0){
         double result = operand.toDouble();
         operand="";
+        QString op=qobject_cast<QPushButton*>(sender())->text();
+
+        if(op=="%")
+            result /=100.0;
+        else if(op =="1/x")
+            result=1/result;
+        else if(op=="x^2")
+            result*=result;
+        else if(op=="√")
+            result=sqrt(result);
+
+        operands.push_back(QString::number(result));
+        ui->display->setText(QString::number(result));
+    }else if(operand==""&&opcodes.size()==0&&operands.size()==1){
+        double result = operands.front().toDouble();
+        operands.pop_front();
         QString op=qobject_cast<QPushButton*>(sender())->text();
 
         if(op=="%")
@@ -201,10 +221,19 @@ void MainWindow::on_btnClear_clicked()
 
 void MainWindow::on_btnMinus_2_clicked()
 {
-    if(operand.toDouble()>0)
-        operand="-"+operand;
-    else if(operand.toDouble()<0)
-        operand=QString::number(operand.toDouble()*(-1));
-    ui->display->setText(operand);
+     qDebug()<<operands.size();
+     qDebug()<<operand;
+    if(operands.size()==1&&operand==""){
+        operand=operands.front();
+        operands.pop_front();
+    }
+    if(operand!=""){
+        if(operand.toDouble()>0)
+            operand="-"+operand;
+        else if(operand.toDouble()<0)
+            operand=QString::number(operand.toDouble()*(-1));
+        ui->display->setText(operand);
+    }
+
 }
 
